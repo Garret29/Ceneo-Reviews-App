@@ -20,10 +20,7 @@ public class Application {
     @Bean
     public CommandLineRunner commandLineRunner(ProductRepository productRepository) {
         return args -> {
-            Product product = new Product("dziala", "iphone", "x", "phone", new LinkedList<>());
-            Review review = new Review(new LinkedList<>(), new LinkedList<>(), "ja", 5.0, "hehe fajne", "polecam", 3, 1, product);
-            product.getReviews().add(review);
-            productRepository.save(product);
+
         };
     }
 }

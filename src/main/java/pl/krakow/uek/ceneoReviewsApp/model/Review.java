@@ -11,13 +11,15 @@ public class Review {
     private long id;
 
     @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(joinColumns = @JoinColumn(name = "review_id"))
     @Column
+    private
     List<String> pros;
 
     @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(joinColumns = @JoinColumn(name = "review_id"))
     @Column
+    private
     List<String> cons;
 
     @Column
@@ -106,11 +108,11 @@ public class Review {
         this.summary = summary;
     }
 
-    public String getRecommended() {
+    public String getRecommendation() {
         return recommendation;
     }
 
-    public void setRecommended(String recommended) {
+    public void setRecommendation(String recommended) {
         recommendation = recommended;
     }
 
@@ -136,5 +138,22 @@ public class Review {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Review)) return false;
+
+        Review review = (Review) o;
+
+        return author.equals(review.author) && product.equals(review.product);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = author.hashCode();
+        result = 31 * result + product.hashCode();
+        return result;
     }
 }

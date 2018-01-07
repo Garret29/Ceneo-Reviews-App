@@ -24,7 +24,7 @@ public class Product {
     @Column
     private String type;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     public Product(String additionalInfo, String brand, String model, String type, List<Review> reviews) {
@@ -84,5 +84,20 @@ public class Product {
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        return model.equals(product.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return model.hashCode();
     }
 }

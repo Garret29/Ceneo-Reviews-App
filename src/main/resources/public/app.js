@@ -48,7 +48,7 @@ app.service('transformationService', function () {
                 // console.log($(obj).text());
             });
 
-            // console.log(review.recommendation);
+            console.log(review.recommendation);
             // console.log(review.rating);
             // console.log(review.author);
             // console.log(review.summary);
@@ -64,7 +64,7 @@ app.service('transformationService', function () {
 
 app.controller('controller', function ($scope, $http, transformationService, $location) {
     $scope.url = $location.absUrl();
-    $scope.code = "";
+    $scope.code = "47667343";
     $scope.extracted = false;
     $scope.transformed = false;
     $scope.loaded = true;

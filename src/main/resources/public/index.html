@@ -16,19 +16,61 @@
     <div class="text-center"><h1><a href="#">Ceneo Reviews App</a></h1></div>
 </div>
 <div class="container-fluid">
-    <div class="col-sm-4">
+    <div class="col-xs-6">
         <label>Podaj kod produktu:</label>
-        <input id="code" ng-model="code"><br><hr>
-        <button class="btn btn-default" ng-disabled="!loaded" ng-click="ETL()">Extract-Transform-Load</button><hr>
+        <input id="code" ng-model="code"><br>
+        <hr>
+        <button class="btn btn-default" ng-disabled="!loaded" ng-click="ETL()">Extract-Transform-Load</button>
+        <hr>
         <button class="btn btn-default" ng-disabled="!loaded" ng-click="extract()">Extract</button>
         <button class="btn btn-default" ng-disabled="!extracted" ng-click="transform()">Transform</button>
         <button class="btn btn-default" ng-disabled="!transformed" ng-click="load()">Load</button>
     </div>
-    <div class="col-sm-4">
+    <div class="col-xs-6">
         <h2>Product:</h2>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Model</th>
+                <th>Marka</th>
+                <th>Dodatkowe informacje</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td ng-bind="product.type"></td>
+                <td ng-bind="product.model"></td>
+                <td ng-bind="product.brand"></td>
+                <td ng-bind="product.additionalInfo"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="col-sm-4>">
+    <div class="row-sm-4" ng-show="transformed">
         <h2>Reviews:</h2>
+        <ul>
+            <li ng-repeat="review in product.reviews">
+                <b>Autor:</b> {{review.author}} <b>Ocena:</b> {{review.rating}} <b>Pomocna:</b> {{review.upvotes}} <b>Niepomocna:</b>
+                {{review.downvotes}} <br>
+                {{review.summary}}<br>
+                <span ng-hide="review.pros.length == 0 || review.pros==null">
+                <b>Zalety:</b>
+                <ul>
+                    <li ng-repeat="pros in review.pros">{{pros}}</li>
+                </ul><br>
+                </span>
+
+                <span ng-hide="review.cons==null || review.cons.length==0">
+                <b>Wady:</b>
+                <ul>
+                    <li ng-repeat="cons in review.cons">{{cons}}</li>
+                </ul><br>
+                </span>
+                <b>Podsumowanie:</b> {{review.recommendation}}
+                <hr>
+            </li>
+        </ul>
     </div>
 </div>
 
