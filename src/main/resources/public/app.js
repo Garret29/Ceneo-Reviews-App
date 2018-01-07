@@ -64,7 +64,7 @@ app.service('transformationService', function () {
 
 app.controller('controller', function ($scope, $http, transformationService, $location) {
         $scope.url = $location.absUrl();
-        $scope.code = "47667343";
+        $scope.code = "";
         $scope.extracted = false;
         $scope.transformed = false;
         $scope.loaded = true;
