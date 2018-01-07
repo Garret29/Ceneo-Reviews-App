@@ -16,11 +16,4 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
     }
-
-    @Bean
-    public CommandLineRunner commandLineRunner(ProductRepository productRepository) {
-        return args -> {
-
-        };
-    }
 }
