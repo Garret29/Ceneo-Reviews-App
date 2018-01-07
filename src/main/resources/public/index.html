@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="app.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="ceneoReviewApp" ng-controller="controller">
+<div class="jumbotron">
+    <div class="text-center"><h1><a href="#">Ceneo Reviews App</a></h1></div>
+</div>
+<div class="container-fluid">
+    <div class="col-sm-4">
+        <label>Podaj kod produktu:</label>
+        <input id="code" ng-model="code"><br><hr>
+        <button class="btn btn-default" ng-disabled="!loaded" ng-click="ETL()">Extract-Transform-Load</button><hr>
+        <button class="btn btn-default" ng-disabled="!loaded" ng-click="extract()">Extract</button>
+        <button class="btn btn-default" ng-disabled="!extracted" ng-click="transform()">Transform</button>
+        <button class="btn btn-default" ng-disabled="!transformed" ng-click="load()">Load</button>
+    </div>
+    <div class="col-sm-4">
+        <h2>Product:</h2>
+    </div>
+    <div class="col-sm-4>">
+        <h2>Reviews:</h2>
+    </div>
+</div>
+
+</body>
+</html>
