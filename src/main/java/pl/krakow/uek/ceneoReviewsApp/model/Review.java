@@ -1,29 +1,29 @@
 package pl.krakow.uek.ceneoReviewsApp.model;
 
+import pl.krakow.uek.ceneoReviewsApp.model.primaryKeys.ReviewPrimaryKey;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_gen")
-    @SequenceGenerator(name = "seq_gen", sequenceName = "seq")
-    private long id;
+public class Review implements Serializable {
+
+    @EmbeddedId
+    private
+    ReviewPrimaryKey reviewPrimaryKey;
 
     @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "review_id"))
+    @CollectionTable(joinColumns = {@JoinColumn(name = "productid"), @JoinColumn(name = "author")})
     @Column
     private
     List<String> pros;
 
     @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "review_id"))
+    @CollectionTable(joinColumns = {@JoinColumn(name = "productid"), @JoinColumn(name = "author")})
     @Column
     private
     List<String> cons;
-
-    @Column
-    private String author;
 
     @Column
     private Double rating;
@@ -41,31 +41,7 @@ public class Review {
     @Column
     private Integer downvotes;
 
-    @OneToOne
-    @JoinColumn(name="product_id")
-    private Product product;
-
-    public Review(List<String> pros, List<String> cons, String author, Double rating, String summary, String recommendation, Integer upvotes, Integer downvotes, Product product) {
-        this.pros = pros;
-        this.cons = cons;
-        this.author = author;
-        this.rating = rating;
-        this.summary = summary;
-        this.recommendation = recommendation;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
-        this.product = product;
-    }
-
     public Review() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public List<String> getPros() {
@@ -82,14 +58,6 @@ public class Review {
 
     public void setCons(List<String> cons) {
         this.cons = cons;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public Double getRating() {
@@ -132,12 +100,28 @@ public class Review {
         this.downvotes = downvotes;
     }
 
-    public Product getProduct() {
-        return product;
+    public ReviewPrimaryKey getReviewPrimaryKey() {
+        return reviewPrimaryKey;
+    }
+
+    public void setReviewPrimaryKey(ReviewPrimaryKey reviewPrimaryKey) {
+        this.reviewPrimaryKey = reviewPrimaryKey;
     }
 
     public void setProduct(Product product) {
-        this.product = product;
+        getReviewPrimaryKey().setProduct(product);
+    }
+
+    public Product getProduct(){
+        return getReviewPrimaryKey().getProduct();
+    }
+
+    public void setAuthor(String author){
+        getReviewPrimaryKey().setAuthor(author);
+    }
+
+    public String getAuthor(){
+        return getReviewPrimaryKey().getAuthor();
     }
 
     @Override
@@ -147,13 +131,11 @@ public class Review {
 
         Review review = (Review) o;
 
-        return author.equals(review.author) && product.equals(review.product);
+        return reviewPrimaryKey.equals(review.reviewPrimaryKey);
     }
 
     @Override
     public int hashCode() {
-        int result = author.hashCode();
-        result = 31 * result + product.hashCode();
-        return result;
+        return reviewPrimaryKey.hashCode();
     }
 }
