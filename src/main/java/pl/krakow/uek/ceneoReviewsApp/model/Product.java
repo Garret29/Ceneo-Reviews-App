@@ -1,15 +1,14 @@
 package pl.krakow.uek.ceneoReviewsApp.model;
 
 import javax.persistence.*;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
-public class Product {
+public class Product implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_gen")
-    @SequenceGenerator(name = "seq_gen", sequenceName = "seq")
-    private long id;
+    private long productid;
 
     @Lob
     @Column
@@ -24,10 +23,11 @@ public class Product {
     @Column
     private String type;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true, mappedBy = "product")
+//    @JoinColumn(name = "productid", referencedColumnName = "productid")
+    private Set<Review> reviews;
 
-    public Product(String additionalInfo, String brand, String model, String type, List<Review> reviews) {
+    public Product(String additionalInfo, String brand, String model, String type, Set<Review> reviews) {
         this.additionalInfo = additionalInfo;
         this.brand = brand;
         this.model = model;
@@ -38,12 +38,21 @@ public class Product {
     public Product() {
     }
 
-    public long getId() {
-        return id;
+
+    public String getModel() {
+        return model;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public long getProductid() {
+        return productid;
+    }
+
+    public void setProductid(long productid) {
+        this.productid = productid;
     }
 
     public String getAdditionalInfo() {
@@ -62,10 +71,6 @@ public class Product {
         this.brand = brand;
     }
 
-    public String getModel() {
-        return model;
-    }
-
     public void setModel(String model) {
         this.model = model;
     }
@@ -78,11 +83,7 @@ public class Product {
         this.type = type;
     }
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(Set<Review> reviews) {
         this.reviews = reviews;
     }
 
@@ -93,11 +94,11 @@ public class Product {
 
         Product product = (Product) o;
 
-        return model.equals(product.model);
+        return productid == product.productid;
     }
 
     @Override
     public int hashCode() {
-        return model.hashCode();
+        return (int) (productid ^ (productid >>> 32));
     }
 }
