@@ -29,7 +29,7 @@
 </style>
 <body ng-app="ceneoReviewApp" ng-controller="controller" data-ng-init="appInit()">
 <div class="jumbotron row">
-    <div class="col-md-10 text-center"><h1><a href="{{url}}">Ceneo Reviews App</a></h1></div>
+    <div class="col-md-10 text-center"><h1><a ng-click="reset()">Ceneo Reviews App</a></h1></div>
     <div class="col-md-2 text-left">
         Recenzje aktualnego produktu:{{product.reviews.length}}<br>
         Liczba produktów w bazie:{{productsRecordsNumber}}<br>
@@ -84,7 +84,7 @@
                                         ng-click="deleteProduct(prod)">Usuń produkt
                                 </button>
                                 <button class="btn btn-danger" ng-disabled="prod===product && !loaded"
-                                        ng-click="deleteReviews(prod.productid)">Usuń recenzje
+                                        ng-click="deleteReviews(prod)">Usuń recenzje z bazy danych
                                 </button>
                             </td>
                         </tr>
@@ -98,7 +98,7 @@
         <h2>Opinie:</h2>
         <ul>
             <li ng-repeat="review in product.reviews" ng-mouseover="">
-                <b>Autor:</b> {{review.reviewPrimaryKey.author}} <b>Ocena:</b> {{review.rating}} <b>Pomocna:</b> {{review.upvotes}} <b>Niepomocna:</b>
+                <b>Autor:</b> {{review.author}} <b>Ocena:</b> {{review.rating}} <b>Pomocna:</b> {{review.upvotes}} <b>Niepomocna:</b>
                 {{review.downvotes}} <br>
                 {{review.summary}}<br>
                 <span ng-hide="review.pros.length == 0 || review.pros==null">

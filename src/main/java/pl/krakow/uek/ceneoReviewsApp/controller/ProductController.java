@@ -27,9 +27,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> postProduct(@RequestBody Product p) {
-        p.getReviews().forEach(review -> {
-            review.setProduct(p);
-        });
+        p.getReviews().forEach(review -> review.setProduct(p));
 
         loadService.load(p);
 

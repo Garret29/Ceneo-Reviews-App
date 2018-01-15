@@ -29,12 +29,11 @@ app.service('transformationService', function () {
                 }
 
                 review.rating = temp;
-                review.reviewPrimaryKey = {};
                 temp = $(obj).find(".reviewer-name-line").text();
                 if(temp.includes("Użytkownik Ceneo")){
-                    review.reviewPrimaryKey.author = "Anonim"+anonymousCount++;
+                    review.author = "Anonim"+anonymousCount++;
                 } else {
-                    review.reviewPrimaryKey.author = temp
+                    review.author = temp
                 }
 
                 review.summary = $(obj).find(".product-review-body").text();
@@ -66,23 +65,25 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
         $scope.html = "";
         $scope.productsRecordsNumber = null;
         $scope.reviewsRecordsNumber = null;
-        $scope.product = null;
+        $scope.product = {};
         $scope.products = [];
         $scope.empty = true;
         $scope.htmlDOMs = [];
-        $scope.counter = 1;
         $scope.currentReviewsNumber = 0;
         $scope.requestBody = {};
 
 
         $scope.ETL = function () {
-            $scope.product = null;
+            $scope.htmlDOMs = [];
             $scope.loaded = false;
 
             $.get("https://www.ceneo.pl/" + $scope.code, function (data) {
                 $scope.html = data;
                 let htmlDOM = $($.parseHTML($scope.html));
                 let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").text();
+                if(reviewCount===""){
+                    reviewCount=1;
+                }
 
                 $scope.currentReviewsNumber = Math.ceil(reviewCount / 10);
                 let j = 0;
@@ -95,10 +96,8 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
                             let promise = new Promise(function (resolve, reject) {
                                 $scope.transform();
                                 resolve();
-                                console.log("1");
                             });
                             promise.then(function () {
-                                console.log("2");
                                 $scope.load();
                             });
                         }
@@ -115,31 +114,39 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
 
 
         $scope.extract = function () {
-            $scope.product = null;
+            $scope.htmlDOMs = [];
             $scope.loaded = false;
-
-            console.log("extract");
 
             $.get("https://www.ceneo.pl/" + $scope.code, function (data) {
                 $scope.html = data;
                 let htmlDOM = $($.parseHTML($scope.html));
                 let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").text();
 
-                $scope.currentReviewsNumber = Math.ceil(reviewCount / 10);
-
-                for ($scope.counter = 1; $scope.counter <= $scope.currentReviewsNumber; $scope.counter++) {
-                    console.log($scope.counter);
-                    console.log($scope.currentReviewsNumber);
-                    let i = $scope.counter;
-                    $.get("https://www.ceneo.pl/" + $scope.code + "/opinie-" + $scope.counter, function (data) {
-                        $scope.htmlDOMs.push($($.parseHTML(data)));
-                        if (i === $scope.currentReviewsNumber) {
-                            $scope.counter--;
-                            $scope.$apply();
-                        }
-                    });
+                if(reviewCount===""){
+                    reviewCount=1;
                 }
 
+                $scope.currentReviewsNumber = Math.ceil(reviewCount / 10);
+
+                let promise = new Promise(function (resolve) {
+                    let array = [];
+                    for (let j = 1; j <= $scope.currentReviewsNumber; j++) {
+
+                        $.get("https://www.ceneo.pl/" + $scope.code + "/opinie-" + j, function (data) {
+                            $scope.htmlDOMs.push($($.parseHTML(data)));
+                            array.push(j);
+                            console.log(array.length + "_PAGE loaded");
+                            if (array.length === $scope.currentReviewsNumber) {
+                                resolve();
+                            }
+                        });
+                    }
+                });
+                promise.then(function () {
+                    console.log("DONE LOADING");
+                    $scope.extracted=true;
+                    $scope.$apply();
+                })
             }).fail(function () {
                 $scope.loaded = true;
                 $scope.extracted = false;
@@ -182,13 +189,6 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
             $scope.loaded = true;
         };
 
-        $scope.$watch('counter ', function (newVal, oldVal) {
-            if (newVal === $scope.currentReviewsNumber) {
-                $scope.extracted = true;
-                $scope.counter = 1;
-            }
-        });
-
         $scope.appInit = function () {
             $.ajaxPrefilter(function (options) {
                 if (options.crossDomain && jQuery.support.cors) {
@@ -207,7 +207,7 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
                     return item !== prod
                 });
 
-                $scope.product = null;
+                $scope.product=$scope.products[0];
                 $scope.productsRecordsNumber = response.data["newproducts"];
                 $scope.reviewsRecordsNumber = response.data["newreviews"];
             });
@@ -219,15 +219,15 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
                 method: "POST"
             }).then(function (response) {
                 $scope.products = [];
-                $scope.product = null;
+                $scope.product = {};
                 $scope.productsRecordsNumber = response.data["newproducts"];
                 $scope.reviewsRecordsNumber = response.data["newreviews"];
             });
         };
 
-        $scope.deleteReviews = function (id) {
+        $scope.deleteReviews = function (prod) {
             $http({
-                url: $scope.url + "products/" + id + "/reviews/delete",
+                url: $scope.url + "products/" + prod.productid + "/reviews/delete",
                 method: "POST"
             }).then(function (response) {
                 $scope.productsRecordsNumber = response.data["newproducts"];
@@ -239,6 +239,23 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
             if ($scope.loaded === true) {
                 $scope.product = product;
             }
+        }
+
+        $scope.reset = function () {
+            $scope.url = $location.absUrl();
+            $scope.code = "";
+            $scope.extracted = false;
+            $scope.transformed = false;
+            $scope.loaded = true;
+            $scope.html = "";
+            $scope.productsRecordsNumber = null;
+            $scope.reviewsRecordsNumber = null;
+            $scope.product = {};
+            $scope.products = [];
+            $scope.empty = true;
+            $scope.htmlDOMs = [];
+            $scope.currentReviewsNumber = 0;
+            $scope.requestBody = {};
         }
     }
 );

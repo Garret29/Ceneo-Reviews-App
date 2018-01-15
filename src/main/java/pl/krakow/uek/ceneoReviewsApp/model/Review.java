@@ -1,7 +1,5 @@
 package pl.krakow.uek.ceneoReviewsApp.model;
 
-import pl.krakow.uek.ceneoReviewsApp.model.primaryKeys.ReviewPrimaryKey;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -9,18 +7,19 @@ import java.util.List;
 @Entity
 public class Review implements Serializable {
 
-    @EmbeddedId
-    private
-    ReviewPrimaryKey reviewPrimaryKey;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_gen")
+    @SequenceGenerator(name = "seq_gen", sequenceName = "seq")
+    private Long reviewid;
 
     @ElementCollection
-    @CollectionTable(joinColumns = {@JoinColumn(name = "productid"), @JoinColumn(name = "author")})
+    @CollectionTable(joinColumns = @JoinColumn(name = "reviewid"))
     @Column
     private
     List<String> pros;
 
     @ElementCollection
-    @CollectionTable(joinColumns = {@JoinColumn(name = "productid"), @JoinColumn(name = "author")})
+    @CollectionTable(joinColumns = @JoinColumn(name = "reviewid"))
     @Column
     private
     List<String> cons;
@@ -40,6 +39,13 @@ public class Review implements Serializable {
 
     @Column
     private Integer downvotes;
+
+    @ManyToOne
+    @JoinColumn(name = "productid", referencedColumnName = "productid")
+    private Product product;
+
+    @Column
+    private String author;
 
     public Review() {
     }
@@ -100,28 +106,24 @@ public class Review implements Serializable {
         this.downvotes = downvotes;
     }
 
-    public ReviewPrimaryKey getReviewPrimaryKey() {
-        return reviewPrimaryKey;
+    public Long getReviewid() {
+        return reviewid;
     }
 
-    public void setReviewPrimaryKey(ReviewPrimaryKey reviewPrimaryKey) {
-        this.reviewPrimaryKey = reviewPrimaryKey;
+    public Product getProduct() {
+        return product;
     }
 
     public void setProduct(Product product) {
-        getReviewPrimaryKey().setProduct(product);
+        this.product = product;
     }
 
-    public Product getProduct(){
-        return getReviewPrimaryKey().getProduct();
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAuthor(String author){
-        getReviewPrimaryKey().setAuthor(author);
-    }
-
-    public String getAuthor(){
-        return getReviewPrimaryKey().getAuthor();
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     @Override
@@ -131,11 +133,29 @@ public class Review implements Serializable {
 
         Review review = (Review) o;
 
-        return reviewPrimaryKey.equals(review.reviewPrimaryKey);
+        if (pros != null ? !pros.equals(review.pros) : review.pros != null) return false;
+        if (cons != null ? !cons.equals(review.cons) : review.cons != null) return false;
+        if (rating != null ? !rating.equals(review.rating) : review.rating != null) return false;
+        if (summary != null ? !summary.equals(review.summary) : review.summary != null) return false;
+        if (recommendation != null ? !recommendation.equals(review.recommendation) : review.recommendation != null)
+            return false;
+        if (upvotes != null ? !upvotes.equals(review.upvotes) : review.upvotes != null) return false;
+        if (downvotes != null ? !downvotes.equals(review.downvotes) : review.downvotes != null) return false;
+        if (product != null ? !product.equals(review.product) : review.product != null) return false;
+        return author != null ? author.equals(review.author) : review.author == null;
     }
 
     @Override
     public int hashCode() {
-        return reviewPrimaryKey.hashCode();
+        int result = pros != null ? pros.hashCode() : 0;
+        result = 31 * result + (cons != null ? cons.hashCode() : 0);
+        result = 31 * result + (rating != null ? rating.hashCode() : 0);
+        result = 31 * result + (summary != null ? summary.hashCode() : 0);
+        result = 31 * result + (recommendation != null ? recommendation.hashCode() : 0);
+        result = 31 * result + (upvotes != null ? upvotes.hashCode() : 0);
+        result = 31 * result + (downvotes != null ? downvotes.hashCode() : 0);
+        result = 31 * result + (product != null ? product.hashCode() : 0);
+        result = 31 * result + (author != null ? author.hashCode() : 0);
+        return result;
     }
 }

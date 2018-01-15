@@ -2,7 +2,7 @@ package pl.krakow.uek.ceneoReviewsApp.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Product implements Serializable{
@@ -23,11 +23,11 @@ public class Product implements Serializable{
     @Column
     private String type;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true, mappedBy = "reviewPrimaryKey.product")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true, mappedBy = "product")
 //    @JoinColumn(name = "productid", referencedColumnName = "productid")
-    private List<Review> reviews;
+    private Set<Review> reviews;
 
-    public Product(String additionalInfo, String brand, String model, String type, List<Review> reviews) {
+    public Product(String additionalInfo, String brand, String model, String type, Set<Review> reviews) {
         this.additionalInfo = additionalInfo;
         this.brand = brand;
         this.model = model;
@@ -43,7 +43,7 @@ public class Product implements Serializable{
         return model;
     }
 
-    public List<Review> getReviews() {
+    public Set<Review> getReviews() {
         return reviews;
     }
 
@@ -83,7 +83,7 @@ public class Product implements Serializable{
         this.type = type;
     }
 
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(Set<Review> reviews) {
         this.reviews = reviews;
     }
 

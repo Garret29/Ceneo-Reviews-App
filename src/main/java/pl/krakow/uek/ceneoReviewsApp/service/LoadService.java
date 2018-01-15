@@ -22,26 +22,27 @@ public class LoadService {
 
     @Transactional
     public void load(Product product) {
-        Optional<Product> optional = productRepository.findByProductid(product.getProductid());
-
-        optional.ifPresent(product1 -> {
-            product.getReviews().forEach(review -> {
-                if (!product1.getReviews().contains(review)) {
-                    product1.getReviews().add(review);
-                }
-            });
-            productRepository.save(product1);
-        });
-        if (!optional.isPresent()) {
-            productRepository.save(product);
-        }
+//        Optional<Product> optional = productRepository.findByProductid(product.getProductid());
+//
+//        optional.ifPresent(product1 -> {
+//            product1.getReviews().forEach(review -> {
+//                review.getPros().clear();
+//                review.getCons().clear();
+//            });
+//            product1.getReviews().clear();
+//            product1.setReviews(product.getReviews());
+//            productRepository.save(product1);
+//        });
+//        if (!optional.isPresent()) {
+        productRepository.save(product);
+//        }
     }
 
     public long getProductRecordsNumber() {
         return productRepository.count();
     }
 
-    public long getReviewRecordsNumber(){
+    public long getReviewRecordsNumber() {
         return reviewRepository.count();
     }
 }
