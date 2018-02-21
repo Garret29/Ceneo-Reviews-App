@@ -190,12 +190,14 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
         };
 
         $scope.appInit = function () {
+            /*
             $.ajaxPrefilter(function (options) {
                 if (options.crossDomain && jQuery.support.cors) {
                     const http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
                     options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
                 }
             });
+            */
         };
 
         $scope.deleteProduct = function (prod) {
@@ -239,7 +241,7 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
             if ($scope.loaded === true) {
                 $scope.product = product;
             }
-        }
+        };
 
         $scope.reset = function () {
             $scope.url = $location.absUrl();

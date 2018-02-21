@@ -15,17 +15,6 @@
     li:hover {
         background-color: darkgrey;
     }
-
-    #productsDiv {
-        position: absolute;
-        overflow-y: auto;
-    }
-
-    #reviewsDiv {
-        position: absolute;
-        overflow-y: scroll;
-    }
-
 </style>
 <body ng-app="ceneoReviewApp" ng-controller="controller" data-ng-init="appInit()">
 <div class="jumbotron row">
@@ -40,7 +29,7 @@
 <div class="container-fluid">
 
     <div class="col-md-6">
-        <row>
+        <div class="row">
             <form name="codeForm">
                 <label for="code">Podaj kod produktu:</label>
                 <input id="code" ng-model="code" ng-disabled="!loaded" required><br>
@@ -57,8 +46,8 @@
                 <button class="btn btn-default" ng-disabled="!transformed" ng-click="load()">Load
                 </button>
             </form>
-        </row>
-        <row>
+        </div>
+        <div>
                 <h2>Produkt:</h2>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -91,7 +80,7 @@
                         </tbody>
                     </table>
                 </div>
-        </row>
+        </div>
     </div>
 
     <div class="col-md-6">
