@@ -80,7 +80,7 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
             $.get("https://www.ceneo.pl/" + $scope.code, function (data) {
                 $scope.html = data;
                 let htmlDOM = $($.parseHTML($scope.html));
-                let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").text();
+                let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").first().text();
                 if(reviewCount===""){
                     reviewCount=1;
                 }
@@ -117,21 +117,27 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
             $scope.htmlDOMs = [];
             $scope.loaded = false;
 
+            console.log("START");
             $.get("https://www.ceneo.pl/" + $scope.code, function (data) {
+                console.log("SUCCESS");
                 $scope.html = data;
                 let htmlDOM = $($.parseHTML($scope.html));
-                let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").text();
+                let reviewCount = htmlDOM.find("span[itemprop='reviewCount']").first().text();
 
+                console.log(reviewCount);
                 if(reviewCount===""){
                     reviewCount=1;
                 }
+                console.log(reviewCount);
 
                 $scope.currentReviewsNumber = Math.ceil(reviewCount / 10);
+                console.log($scope.currentReviewsNumber);
 
-                let promise = new Promise(function (resolve) {
+                let promise = new Promise(function (resolve, reject) {
+                    console.log("PROMISE1");
                     let array = [];
                     for (let j = 1; j <= $scope.currentReviewsNumber; j++) {
-
+                        console.log(j);
                         $.get("https://www.ceneo.pl/" + $scope.code + "/opinie-" + j, function (data) {
                             $scope.htmlDOMs.push($($.parseHTML(data)));
                             array.push(j);
@@ -148,6 +154,7 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
                     $scope.$apply();
                 })
             }).fail(function () {
+                console.log("FAIL");
                 $scope.loaded = true;
                 $scope.extracted = false;
                 $scope.transformed = false;
@@ -190,14 +197,12 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
         };
 
         $scope.appInit = function () {
-            /*
             $.ajaxPrefilter(function (options) {
                 if (options.crossDomain && jQuery.support.cors) {
                     const http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
                     options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
                 }
             });
-            */
         };
 
         $scope.deleteProduct = function (prod) {
