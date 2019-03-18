@@ -191,6 +191,13 @@ app.controller('controller', function ($scope, $http, transformationService, $lo
                 if (options.crossDomain && jQuery.support.cors) {
                     const http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
                     options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+
+                    if ( !options.beforeSend) {
+                        options.beforeSend = function (xhr) {
+                            xhr.setRequestHeader('x-requested-with', 'xhr');
+                        }
+                    }
+
                 }
             });
         };
