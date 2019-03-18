@@ -10,32 +10,42 @@ import pl.krakow.uek.ceneoReviewsApp.repository.ReviewRepository;
 import java.util.Optional;
 
 @Service
-public class LoadService {
+public class CeneoService {
     private ProductRepository productRepository;
     private ReviewRepository reviewRepository;
 
     @Autowired
-    public LoadService(ProductRepository productRepository, ReviewRepository reviewRepository) {
+    public CeneoService(ProductRepository productRepository, ReviewRepository reviewRepository) {
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
     }
 
     @Transactional
-    public void load(Product product) {
-//        Optional<Product> optional = productRepository.findByProductid(product.getProductid());
-//
-//        optional.ifPresent(product1 -> {
-//            product1.getReviews().forEach(review -> {
-//                review.getPros().clear();
-//                review.getCons().clear();
-//            });
-//            product1.getReviews().clear();
-//            product1.setReviews(product.getReviews());
-//            productRepository.save(product1);
-//        });
-//        if (!optional.isPresent()) {
+    public void save(Product product) {
         productRepository.save(product);
-//        }
+    }
+
+    @Transactional
+    public void delete(long id) {
+        deleteReviews(id);
+        productRepository.delete(id);
+    }
+
+    @Transactional
+    public void deleteAll() {
+        productRepository.deleteAll();
+    }
+
+    @Transactional
+    public void deleteReviews(long id) {
+        Optional<Product> optional = productRepository.findByProductid(id);
+        optional.ifPresent(product -> {
+            product.getReviews().forEach(review -> {
+                review.getPros().clear();
+                review.getCons().clear();
+            });
+            product.getReviews().clear();
+        });
     }
 
     public long getProductRecordsNumber() {
